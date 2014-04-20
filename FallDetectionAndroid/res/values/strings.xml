@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FallDetection</string>
+    <string name="pick_contact">Add Contact</string>
+    <string name="action_settings">Settings</string>
+	<string name="braodcast">Broadcast SMS</string>
+	<string name="delete">Delete All</string>
+
+</resources>
