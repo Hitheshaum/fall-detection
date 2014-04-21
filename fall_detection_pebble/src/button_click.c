@@ -5,8 +5,8 @@ static TextLayer *text_layer;
 static uint32_t accel_buffer[]={0,0,0,0,0,0,0,0};
 static uint8_t position=0;
 static uint8_t WIN=2;
-static uint8_t count=0;
-static uint32_t TRESHOLD=11000000;
+static int count=0;
+static uint32_t TRESHOLD=27000000;
 
 void out_sent_handler(DictionaryIterator *sent, void *context) {
    // outgoing message was delivered
