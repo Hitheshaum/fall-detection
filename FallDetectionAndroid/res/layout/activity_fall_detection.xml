@@ -11,17 +11,18 @@
         android:layout_height="wrap_content"
         android:onClick="pickContact"
         android:text="@string/pick_contact"/>
-    <Button 
+    <!-- <Button 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="broadcast"
         android:text="@string/braodcast"/>
-    
-    
-    <TextView
-        android:id="@+id/phone_number"
+     -->
+     <Button 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:onClick="delete"
+        android:text="@string/delete"/>
+
     <ScrollView 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -32,10 +33,5 @@
             android:orientation="vertical">
         </LinearLayout>
     </ScrollView>
-    <Button 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="delete"
-        android:text="@string/delete"/>
     
 </LinearLayout>

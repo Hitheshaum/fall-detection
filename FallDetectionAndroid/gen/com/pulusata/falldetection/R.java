@@ -25,10 +25,9 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f080003;
+        public static final int action_settings=0x7f080002;
         public static final int get_contact=0x7f080000;
-        public static final int phone_number=0x7f080001;
-        public static final int phone_numbers=0x7f080002;
+        public static final int phone_numbers=0x7f080001;
     }
     public static final class layout {
         public static final int activity_fall_detection=0x7f030000;
@@ -44,6 +43,8 @@ public final class R {
         public static final int braodcast=0x7f040003;
         public static final int delete=0x7f040004;
         public static final int pick_contact=0x7f040001;
+        public static final int start_service=0x7f040005;
+        public static final int stop_service=0x7f040006;
     }
     public static final class style {
         /** 
