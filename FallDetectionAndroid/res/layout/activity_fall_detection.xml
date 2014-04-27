@@ -23,15 +23,11 @@
         android:onClick="delete"
         android:text="@string/delete"/>
 
-    <ScrollView 
-        android:layout_width="fill_parent"
+
+    <ListView 
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout 
-            android:id="@+id/phone_numbers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-        </LinearLayout>
-    </ScrollView>
+    </ListView>
     
 </LinearLayout>

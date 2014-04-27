@@ -1,7 +1,9 @@
 package com.pulusata.falldetection;
 
 
-import android.app.Activity;
+import java.util.ArrayList;
+
+import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,25 +16,33 @@ import android.provider.ContactsContract.Contacts;
 import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 
-public class FallDetection extends Activity {
-    private LinearLayout phoneNumLayout;
-    // private String message = "Help Me!!";
+public class FallDetection extends ListActivity {
     private final String PREF_PHONE_NUMBERS = "phone_numbers";
+    private final String PREF_NAMES = "names";
     protected Handler mHandler;
-
-    // public void broadcast(View view) {
-    // sendBroadcast();
-    // }
+    ArrayList<String> contactList = new ArrayList<String>();
+    ArrayList<String> nameList = new ArrayList<String>();
+    ArrayAdapter<String> adapter;
 
     public void delete(View view) {
-        phoneNumLayout.removeAllViews();
+        while (contactList.size() != 0) {
+            contactList.remove(contactList.size() - 1);
+        }
         SharedPreferences phoneNumbers = getSharedPreferences(
                 PREF_PHONE_NUMBERS, 0);
         phoneNumbers.edit().clear().commit();
+
+        while (nameList.size() != 0) {
+            nameList.remove(nameList.size() - 1);
+        }
+        SharedPreferences names = getSharedPreferences(PREF_NAMES, 0);
+        names.edit().clear().commit();
+        adapter.notifyDataSetChanged();
 
     }
 
@@ -43,15 +53,22 @@ public class FallDetection extends Activity {
         startActivityForResult(intent, 1);
     }
 
+    protected void loadNames() {
+        SharedPreferences names = getSharedPreferences(PREF_NAMES, 0);
+        String currName;
+        for (int i = 0; !((currName = names.getString(Integer.toString(i),
+                "")).equals("")); i++) {
+            nameList.add(currName);
+        }
+    }
+
     protected void loadNumbers() {
         SharedPreferences phoneNumbers = getSharedPreferences(
                 PREF_PHONE_NUMBERS, 0);
         String currPhoneNumber;
         for (int i = 0; !((currPhoneNumber = phoneNumbers.getString(
                 Integer.toString(i), "")).equals("")); i++) {
-            TextView phoneNumber = new TextView(this);
-            phoneNumber.setText(currPhoneNumber);
-            phoneNumLayout.addView(phoneNumber);
+            contactList.add(currPhoneNumber);
         }
     }
 
@@ -75,12 +92,13 @@ public class FallDetection extends Activity {
                                 .getString(cursor
                                         .getColumnIndex(Phone.NUMBER));
                         if (formattedPhoneNumber != null) {
-                            // Set phone number
-                            TextView phoneNumber = new TextView(this);
-                            phoneNumber
-                                    .setText(PhoneNumberUtils
+                            contactList
+                                    .add(PhoneNumberUtils
                                             .stripSeparators(formattedPhoneNumber));
-                            phoneNumLayout.addView(phoneNumber);
+
+                            Log.d("number", PhoneNumberUtils
+                                    .stripSeparators(formattedPhoneNumber));
+
                         }
                     }
                     cursor.close();
@@ -93,6 +111,8 @@ public class FallDetection extends Activity {
                         String name = c
                                 .getString(c
                                         .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                        nameList.add(name);
+                        adapter.notifyDataSetChanged();
                         Log.d("name", name);
                     }
                 }
@@ -104,8 +124,13 @@ public class FallDetection extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fall_detection);
-        phoneNumLayout = (LinearLayout) findViewById(R.id.phone_numbers);
         loadNumbers();
+        loadNames();
+
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, nameList);
+        setListAdapter(adapter);
+
     }
 
     @Override
@@ -115,9 +140,17 @@ public class FallDetection extends Activity {
     }
 
     @Override
+    protected void onListItemClick(ListView l, View v, int position,
+            long id) {
+        String item = (String) getListAdapter().getItem(position);
+        Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         saveNumbers();
+        saveNames();
     }
 
     @Override
@@ -125,30 +158,25 @@ public class FallDetection extends Activity {
         super.onResume();
     }
 
-    protected void saveNumbers() {
-        SharedPreferences phoneNumbers = getSharedPreferences(
-                PREF_PHONE_NUMBERS, 0);
-        SharedPreferences.Editor editor = phoneNumbers.edit();
-        for (int i = 0; i < phoneNumLayout.getChildCount(); i++) {
-            String currPhoneNumber = ((TextView) (phoneNumLayout
-                    .getChildAt(i))).getText().toString();
-            editor.putString(Integer.toString(i), currPhoneNumber);
+    protected void saveNames() {
+        SharedPreferences names = getSharedPreferences(PREF_NAMES, 0);
+        SharedPreferences.Editor editor = names.edit();
+        for (int i = 0; i < nameList.size(); i++) {
+            String currName = nameList.get(i);
+            editor.putString(Integer.toString(i), currName);
         }
         editor.commit();
     }
 
-    // protected void sendBroadcast() {
-    // try {
-    // SmsManager smsManager = SmsManager.getDefault();
-    // for (int i = 0; i < phoneNumLayout.getChildCount(); i++) {
-    // String currPhoneNumber = ((TextView) (phoneNumLayout
-    // .getChildAt(i))).getText().toString();
-    // smsManager.sendTextMessage(currPhoneNumber, null, message,
-    // null, null);
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
+    protected void saveNumbers() {
+        SharedPreferences phoneNumbers = getSharedPreferences(
+                PREF_PHONE_NUMBERS, 0);
+        SharedPreferences.Editor editor = phoneNumbers.edit();
+        for (int i = 0; i < contactList.size(); i++) {
+            String currPhoneNumber = contactList.get(i);
+            editor.putString(Integer.toString(i), currPhoneNumber);
+        }
+        editor.commit();
+    }
 
 }
