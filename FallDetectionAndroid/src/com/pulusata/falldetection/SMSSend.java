@@ -26,9 +26,11 @@ public class SMSSend extends PebbleDataReceiver {
     private static final UUID PEBBLE_APP_UUID = UUID
             .fromString("5ed10362-a625-41e6-b35c-e6b10feb71e6");
     private final String PREF_PHONE_NUMBERS = "phone_numbers";
-    private final String message = "Help me!";
+    private String message = "Help me!";
     private LocationManager mLocationManager;
     private Context mContext;
+    private String PREF_CONFIG = "configuration";
+    private int tresholdLevel;
 
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
@@ -61,33 +63,56 @@ public class SMSSend extends PebbleDataReceiver {
         PebbleKit.sendAckToPebble(context, transactionId);
 
         mContext = context;
-        mLocationManager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
+        loadConfig();
 
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setCostAllowed(false);
-
-        String mProviderName = mLocationManager.getBestProvider(criteria,
-                true);
-
-        Location lastLocation = mLocationManager
-                .getLastKnownLocation(mProviderName);
         if (data.getInteger(1).intValue() == 42) {
+            mLocationManager = (LocationManager) context
+                    .getSystemService(Context.LOCATION_SERVICE);
+
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setCostAllowed(false);
+
+            String mProviderName = mLocationManager.getBestProvider(
+                    criteria, false);
+            Location lastLocation = mLocationManager
+                    .getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 
             if (lastLocation == null
                     || (System.currentTimeMillis()
                             - lastLocation.getTime() > DateUtils.MINUTE_IN_MILLIS * 10)) {
-                mLocationManager.requestLocationUpdates(mProviderName,
-                        10000, 10, mLocationListener);
+                mLocationManager.requestLocationUpdates(mProviderName, 0,
+                        0, mLocationListener);
                 sendSMS(lastLocation, true);
             } else if ((System.currentTimeMillis()
                     - lastLocation.getTime() < DateUtils.MINUTE_IN_MILLIS * 10)) {
                 sendSMS(lastLocation, false);
             }
 
+        } else if (data.getInteger(1).intValue() == 12) {
+            sendDataToWatch();
         }
 
+    }
+
+    public void sendDataToWatch() {
+        // Build up a Pebble dictionary
+        PebbleDictionary data = new PebbleDictionary();
+
+        data.addUint8(0, (byte) tresholdLevel);
+
+        // Send the assembled dictionary to the weather watch-app;
+        PebbleKit.sendDataToPebble(mContext,
+                UUID.fromString("5ed10362-a625-41e6-b35c-e6b10feb71e6"),
+                data);
+    }
+
+    protected void loadConfig() {
+        SharedPreferences config = mContext.getSharedPreferences(
+                PREF_CONFIG, 0);
+        tresholdLevel = Integer.parseInt(config.getString("tresholdValue",
+                "50"));
+        message = config.getString("msg", "Help Me!");
     }
 
     protected void sendSMS(Location location, boolean last) {
@@ -130,8 +155,11 @@ public class SMSSend extends PebbleDataReceiver {
                 Integer.toString(i), "")).equals("")); i++) {
             try {
                 SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(currPhoneNumber, null, message
-                        + locationString + addressText, null, null);
+                smsManager.sendMultipartTextMessage(
+                        currPhoneNumber,
+                        null,
+                        smsManager.divideMessage(message + locationString
+                                + addressText), null, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

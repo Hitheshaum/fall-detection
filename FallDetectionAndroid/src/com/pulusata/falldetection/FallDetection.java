@@ -29,6 +29,11 @@ public class FallDetection extends ListActivity {
     ArrayList<String> nameList = new ArrayList<String>();
     ArrayAdapter<String> adapter;
 
+    public void configure(View view) {
+        Intent configIntent = new Intent(this, Configure.class);
+        startActivity(configIntent);
+    }
+
     public void delete(View view) {
         while (contactList.size() != 0) {
             contactList.remove(contactList.size() - 1);
