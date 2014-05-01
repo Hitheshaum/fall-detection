@@ -26,6 +26,28 @@ extern void window_unload3(Window *window3);
 extern void window_disappear3(Window *window3);
 extern void window_appear3(Window *window3);
 
+static void out_sent_handler(DictionaryIterator *sent, void *context) {
+   // outgoing message was delivered
+}
+
+static void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
+   // outgoing message failed
+}
+
+static void in_received_handler(DictionaryIterator *received, void *context) {
+  Tuple *tuple = dict_find(received, 0);
+  uint8_t multiplier= tuple->value->uint8;
+  TRESHOLD= 20000000+(multiplier*100000);
+  if(multiplier==25){
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "data received");
+  }
+}
+
+
+static void in_dropped_handler(AppMessageResult reason, void *context) {
+   // incoming message dropped
+}
+
   
 static void accel_data_handler(AccelData *data, uint32_t num_samples){
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "acceleration read");
@@ -153,7 +175,21 @@ static void window_load(Window *window) {
   line_layer = layer_create(line_frame);
   layer_set_update_proc(line_layer, line_layer_update_callback);
   layer_add_child(window_layer, line_layer);
+  
+  app_message_register_outbox_sent(out_sent_handler);
+  app_message_register_outbox_failed(out_failed_handler);
+  app_message_register_inbox_received(in_received_handler);
+  app_message_register_inbox_dropped(in_dropped_handler);
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "app message subscribed");
+  
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  Tuplet value = TupletInteger(1, 12);
+  dict_write_tuplet(iter, &value);
+  app_message_outbox_send();
 }
 
 
@@ -163,8 +199,8 @@ static void window_unload(Window *window) {
   text_layer_destroy(text_time_layer);
   text_layer_destroy(text_date_layer);
   layer_destroy(line_layer);
-  window_stack_remove(window, true);
-  window_stack_push(window3, true);
+  //window_stack_remove(window, true);
+  //window_stack_push(window3, true);
 }
 
 static void window_appear(Window *window){
@@ -190,7 +226,7 @@ static void init(void) {
     .unload = window_unload,
   });
   window_set_fullscreen(window, true);
-  window_stack_push(window, true/*animated*/);
+  
   window_set_background_color(window, GColorBlack);
   
   window2 = window_create();
@@ -210,6 +246,9 @@ static void init(void) {
     .disappear=window_disappear3,
     .unload = window_unload3,
   });
+  
+  window_stack_push(window3, false/*animated*/);
+  window_stack_push(window, true/*animated*/);
 }
 
 static void deinit(void) {

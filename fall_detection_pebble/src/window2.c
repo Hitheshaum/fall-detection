@@ -7,13 +7,7 @@ static void up_click_handler2(ClickRecognizerRef recognizer, void *context);
 static void down_click_handler2(ClickRecognizerRef recognizer, void *context);
 static void count_down_handler(struct tm *tick_time, TimeUnits units_changed);
 
-static void out_sent_handler(DictionaryIterator *sent, void *context) {
-   // outgoing message was delivered
-}
 
-static void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
-   // outgoing message failed
-}
 
 static void window_load2(Window *window2) {
   Layer *window_layer = window_get_root_layer(window2);
@@ -23,7 +17,7 @@ static void window_load2(Window *window2) {
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
-  text_layer_set_text(text_layer, "10");
+  text_layer_set_text(text_layer, "15");
   
   note_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 28 } });
   text_layer_set_font(note_layer, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
@@ -43,12 +37,16 @@ static void count_down_handler(struct tm *tick_time, TimeUnits units_changed){
   static char buf[] = "12";
   snprintf(buf, sizeof(buf), "%d", count_down--);
   text_layer_set_text(text_layer, buf);
+  if(count_down<5){
+    vibes_short_pulse();
+  }
   if(count_down==0){
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
     Tuplet value = TupletInteger(1, 42);
     dict_write_tuplet(iter, &value);
     app_message_outbox_send();
+    vibes_long_pulse();
     window_stack_pop(true);
   }
 }
@@ -57,11 +55,7 @@ static void window_appear2(Window *window2){
   tick_timer_service_subscribe(SECOND_UNIT, count_down_handler);
   count_down_handler( NULL, SECOND_UNIT);
   count_down=15;
-  app_message_register_outbox_sent(out_sent_handler);
-  app_message_register_outbox_failed(out_failed_handler);
-  const uint32_t inbound_size = 64;
-  const uint32_t outbound_size = 64;
-  app_message_open(inbound_size, outbound_size);
+  vibes_long_pulse();
 }
 
 static void window_disappear2(Window *window2){
