@@ -33,18 +33,35 @@ public final class R {
         public static final int progressbar=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f090004;
+        public static final int above60F=0x7f090009;
+        public static final int above60M=0x7f090008;
+        public static final int action_settings=0x7f090014;
+        public static final int button1=0x7f090010;
+        public static final int car_crash=0x7f09000e;
+        public static final int current_message=0x7f090001;
         public static final int customMessage=0x7f090000;
-        public static final int get_contact=0x7f090003;
-        public static final int refresh_match_layout=0x7f090001;
-        public static final int treshold=0x7f090002;
+        public static final int default_tresh=0x7f090006;
+        public static final int delete_button=0x7f090013;
+        public static final int fall_treshold_display=0x7f090003;
+        public static final int fractured=0x7f09000d;
+        public static final int get_contact=0x7f09000f;
+        public static final int less12=0x7f09000c;
+        public static final int name=0x7f090011;
+        public static final int osteopenia=0x7f09000b;
+        public static final int osteoporosis=0x7f090007;
+        public static final int phoneNumber=0x7f090012;
+        public static final int refresh_match_layout=0x7f090002;
+        public static final int treshold=0x7f090004;
+        public static final int treshold_defaults=0x7f090005;
+        public static final int young=0x7f09000a;
     }
     public static final class layout {
         public static final int activity_configure=0x7f030000;
         public static final int activity_fall_detection=0x7f030001;
-        public static final int fragment_configure=0x7f030002;
-        public static final int fragment_fall_detection=0x7f030003;
-        public static final int main=0x7f030004;
+        public static final int contact_list_layout=0x7f030002;
+        public static final int fragment_configure=0x7f030003;
+        public static final int fragment_fall_detection=0x7f030004;
+        public static final int main=0x7f030005;
     }
     public static final class menu {
         public static final int configure=0x7f080000;

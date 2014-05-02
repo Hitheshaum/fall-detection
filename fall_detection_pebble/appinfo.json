@@ -1,4 +1,10 @@
 {
+    "longName": "Fall Detection",
+    "watchapp": {
+        "watchface": false
+    },
+    "companyName": "hitheshaum@gmail.com",
+    "shortName": "Fall Detection",
     "capabilities": [
         ""
     ],
@@ -6,13 +12,7 @@
     "resources": {
         "media": []
     },
-    "longName": "Fall Detection",
-    "watchapp": {
-        "watchface": false
-    },
-    "companyName": "hitheshaum@gmail.com",
-    "shortName": "Fall Detection",
-    "versionCode": 1,
     "versionLabel": "1.0",
-    "appKeys": {}
+    "appKeys": {},
+    "versionCode": 1
 }

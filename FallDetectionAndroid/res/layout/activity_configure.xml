@@ -4,35 +4,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.pulusata.falldetection.Configure" >
-    <TextView android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Custom Message"
-        android:textSize="20sp"
-        android:gravity="center_horizontal"/>
-    
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <EditText
-	        android:id="@+id/customMessage"
-	        android:layout_width="0dp"
-	        android:layout_weight="1"
-	        android:layout_height="100dp"
-	        android:hint="Help Me!"
-	        android:textSize="20sp"
-	        android:ems="10"
-	        android:inputType="textMultiLine" >
-	        <requestFocus />
-	    </EditText>
-        
-        <Button android:layout_width="wrap_content"
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="110dp" >
+
+        <LinearLayout 
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="save"
-            android:background="@color/rounded_container_bg"
-            android:textColor="#ffffff"
-            android:textSize="20sp"
-            android:text="Save"/>
-    </LinearLayout>
+            android:orientation="vertical">
+	        <LinearLayout android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal">
+	            <EditText
+	                android:id="@+id/customMessage"
+	                android:layout_width="0dp"
+	                android:layout_weight="1"
+	                android:layout_height="90dp"
+	                android:hint="Custom Message"
+	                android:textSize="20sp"
+	                android:ems="10"
+	                android:inputType="textMultiLine" >
+	            </EditText>
+	            
+	            <Button android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:onClick="save"
+	                android:background="@color/rounded_container_bg"
+	                android:textColor="#ffffff"
+	                android:textSize="20sp"
+	                android:text="Save"/>
+	        </LinearLayout>
+	        <TextView 
+	            android:id="@+id/current_message"
+	            android:textSize="20sp"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:text="Current message"/>
+            
+        </LinearLayout>
+	    
+    </ScrollView>
+    
     
     
     
@@ -48,6 +62,7 @@
         android:visibility="visible" >
  
         <TextView
+            android:id="@+id/fall_treshold_display"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -128,5 +143,60 @@
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
+    <ScrollView android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent">
+        <RadioGroup 
+            android:id="@+id/treshold_defaults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton 
+                android:id="@+id/default_tresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Default"/>
+            <RadioButton 
+                android:id="@+id/osteoporosis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Osteoporosis"/>
+            <RadioButton 
+                android:id="@+id/above60M"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Above 60 years (Male)"/>
+            <RadioButton 
+                android:id="@+id/above60F"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Above 60 years (Female)"/>
+            <RadioButton 
+                android:id="@+id/young"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Young and healthy"/>
+            <RadioButton 
+                android:id="@+id/osteopenia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Osteopenia"/>
+            <RadioButton 
+                android:id="@+id/less12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age less than 12"/>
+            <RadioButton 
+                android:id="@+id/fractured"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Currently Fractured"/>
+            <RadioButton 
+                android:id="@+id/car_crash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Car crash"/>
+
+        </RadioGroup>
+    </ScrollView>
     
 </LinearLayout>

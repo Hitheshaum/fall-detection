@@ -5,11 +5,14 @@ import java.util.UUID;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getpebble.android.kit.PebbleKit;
@@ -21,6 +24,12 @@ public class Configure extends Activity {
     private SeekBar tresholdBar;
     private String PREF_CONFIG = "configuration";
     int tresholdLevel;
+    private String currentMessage;
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 
     public void save(View view) {
         SharedPreferences config = getSharedPreferences(PREF_CONFIG, 0);
@@ -31,6 +40,10 @@ public class Configure extends Activity {
                         .toString());
 
         editor.commit();
+        ((TextView) findViewById(R.id.current_message))
+                .setText("Current Message: "
+                        + ((EditText) findViewById(R.id.customMessage))
+                                .getText().toString());
     }
 
     public void sendDataToWatch() {
@@ -49,6 +62,7 @@ public class Configure extends Activity {
         SharedPreferences config = getSharedPreferences(PREF_CONFIG, 0);
         tresholdLevel = Integer.parseInt(config.getString("tresholdValue",
                 "50"));
+        currentMessage = config.getString("msg", "Help Me!");
     }
 
     @Override
@@ -57,6 +71,7 @@ public class Configure extends Activity {
         setContentView(R.layout.activity_configure);
         loadConfig();
         tresholdBar = (SeekBar) findViewById(R.id.treshold);
+        RadioGroup tresholdGroup = (RadioGroup) findViewById(R.id.treshold_defaults);
 
         tresholdBar
                 .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -65,6 +80,8 @@ public class Configure extends Activity {
                     public void onProgressChanged(SeekBar seekBar,
                             int progress, boolean fromUser) {
                         tresholdLevel = progress;
+                        ((TextView) findViewById(R.id.fall_treshold_display))
+                                .setText("Fall Treshold: " + tresholdLevel);
                     }
 
                     @Override
@@ -73,12 +90,8 @@ public class Configure extends Activity {
 
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
-                        SharedPreferences config = getSharedPreferences(
-                                PREF_CONFIG, 0);
-                        SharedPreferences.Editor editor = config.edit();
-                        editor.putString("tresholdValue",
-                                Integer.toString(tresholdLevel));
-                        editor.commit();
+
+                        saveTreshold();
 
                         Toast.makeText(Configure.this,
                                 "seek bar progress:" + tresholdLevel,
@@ -96,6 +109,59 @@ public class Configure extends Activity {
                         });
                     }
                 });
+        tresholdGroup
+                .setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+                    @Override
+                    public void onCheckedChanged(RadioGroup group,
+                            int checkedId) {
+                        switch (checkedId) {
+                        case R.id.young:
+                            tresholdLevel = 65;
+                            break;
+                        case R.id.above60F:
+                            tresholdLevel = 40;
+                            break;
+                        case R.id.above60M:
+                            tresholdLevel = 45;
+                            break;
+                        case R.id.car_crash:
+                            tresholdLevel = 70;
+                            break;
+                        case R.id.osteoporosis:
+                            tresholdLevel = 40;
+                            break;
+                        case R.id.osteopenia:
+                            tresholdLevel = 45;
+                            break;
+                        case R.id.less12:
+                            tresholdLevel = 55;
+                            break;
+                        case R.id.fractured:
+                            tresholdLevel = 40;
+                            break;
+                        case R.id.default_tresh:
+                            tresholdLevel = 50;
+                            break;
+                        default:
+                            break;
+                        }
+                        saveTreshold();
+                        tresholdBar.post(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                tresholdBar
+                                        .setSecondaryProgress(tresholdLevel);
+                                tresholdBar.setProgress(tresholdLevel);
+                                sendDataToWatch();
+
+                            }
+
+                        });
+                    }
+
+                });
 
     }
 
@@ -104,5 +170,14 @@ public class Configure extends Activity {
         super.onResume();
         tresholdBar.setProgress(tresholdLevel);
         tresholdBar.setSecondaryProgress(tresholdLevel);
+        ((TextView) findViewById(R.id.current_message))
+                .setText("Current Message: " + currentMessage);
+    }
+
+    protected void saveTreshold() {
+        SharedPreferences config = getSharedPreferences(PREF_CONFIG, 0);
+        SharedPreferences.Editor editor = config.edit();
+        editor.putString("tresholdValue", Integer.toString(tresholdLevel));
+        editor.commit();
     }
 }

@@ -4,8 +4,10 @@ package com.pulusata.falldetection;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,18 +17,65 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.telephony.PhoneNumberUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 public class FallDetection extends ListActivity {
+    private class MyArrayAdapter extends ArrayAdapter<String> {
+        private final Context context;
+        private final ArrayList<String> phoneNumbers;
+        private final ArrayList<String> names;
+
+        public MyArrayAdapter(Context context,
+                ArrayList<String> phoneNumbers, ArrayList<String> names) {
+            super(context, R.layout.contact_list_layout, phoneNumbers);
+            this.context = context;
+            this.phoneNumbers = phoneNumbers;
+            this.names = names;
+        }
+
+        @Override
+        public View getView(int position, View convertView,
+                ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.contact_list_layout,
+                    parent, false);
+            TextView numberView = (TextView) rowView
+                    .findViewById(R.id.phoneNumber);
+            TextView nameView = (TextView) rowView.findViewById(R.id.name);
+            numberView.setText(phoneNumbers.get(position));
+            nameView.setText(names.get(position));
+
+            Button deleteButton = (Button) rowView
+                    .findViewById(R.id.delete_button);
+            final int currentPosition = position;
+            deleteButton.setOnClickListener(new Button.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Log.d("position", "" + currentPosition);
+                    delAtPos(currentPosition);
+
+                }
+            });
+            return rowView;
+
+        }
+
+    }
+
     private final String PREF_PHONE_NUMBERS = "phone_numbers";
     private final String PREF_NAMES = "names";
     protected Handler mHandler;
     ArrayList<String> contactList = new ArrayList<String>();
     ArrayList<String> nameList = new ArrayList<String>();
+
     ArrayAdapter<String> adapter;
 
     public void configure(View view) {
@@ -34,21 +83,9 @@ public class FallDetection extends ListActivity {
         startActivity(configIntent);
     }
 
-    public void delete(View view) {
-        while (contactList.size() != 0) {
-            contactList.remove(contactList.size() - 1);
-        }
-        SharedPreferences phoneNumbers = getSharedPreferences(
-                PREF_PHONE_NUMBERS, 0);
-        phoneNumbers.edit().clear().commit();
-
-        while (nameList.size() != 0) {
-            nameList.remove(nameList.size() - 1);
-        }
-        SharedPreferences names = getSharedPreferences(PREF_NAMES, 0);
-        names.edit().clear().commit();
-        adapter.notifyDataSetChanged();
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     public void pickContact(View view) {
@@ -123,6 +160,8 @@ public class FallDetection extends ListActivity {
                 }
             }
         }
+        saveNames();
+        saveNumbers();
     }
 
     @Override
@@ -132,8 +171,9 @@ public class FallDetection extends ListActivity {
         loadNumbers();
         loadNames();
 
-        adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, nameList);
+        // adapter = new ArrayAdapter<String>(this,
+        // android.R.layout.simple_list_item_1, nameList);
+        adapter = new MyArrayAdapter(this, contactList, nameList);
         setListAdapter(adapter);
 
     }
@@ -145,18 +185,18 @@ public class FallDetection extends ListActivity {
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position,
-            long id) {
-        String item = (String) getListAdapter().getItem(position);
-        Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         saveNumbers();
         saveNames();
     }
+
+    // @Override
+    // protected void onListItemClick(ListView l, View v, int position,
+    // long id) {
+    // String item = (String) getListAdapter().getItem(position);
+    // Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+    // }
 
     @Override
     protected void onResume() {
@@ -182,6 +222,20 @@ public class FallDetection extends ListActivity {
             editor.putString(Integer.toString(i), currPhoneNumber);
         }
         editor.commit();
+    }
+
+    private void delAtPos(int position) {
+        contactList.remove(position);
+        nameList.remove(position);
+        adapter.notifyDataSetChanged();
+        SharedPreferences phoneNumbers = getSharedPreferences(
+                PREF_PHONE_NUMBERS, 0);
+        phoneNumbers.edit().clear().commit();
+        SharedPreferences names = getSharedPreferences(PREF_NAMES, 0);
+        names.edit().clear().commit();
+        saveNames();
+        saveNumbers();
+
     }
 
 }
