@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/FD_AndroidStudio.iml" filepath="$PROJECT_DIR$/FD_AndroidStudio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fallDetection/fallDetection.iml" filepath="$PROJECT_DIR$/fallDetection/fallDetection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pEBBLE_KIT/pEBBLE_KIT.iml" filepath="$PROJECT_DIR$/pEBBLE_KIT/pEBBLE_KIT.iml" />
+    </modules>
+  </component>
+</project>
+

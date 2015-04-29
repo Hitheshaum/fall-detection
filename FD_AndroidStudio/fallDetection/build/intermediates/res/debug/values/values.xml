@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/hitheshaum/fall-detection/FD_AndroidStudio/fallDetection/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="default_screen_bg">#20324a</color>
+    <color name="light_gray_header_color">#646663</color>
+    <color name="rounded_container_bg">#80000000</color>
+    <color name="rounded_container_border">#3b3f44</color>
+    <!-- From: file:/Users/hitheshaum/fall-detection/FD_AndroidStudio/fallDetection/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- From: file:/Users/hitheshaum/fall-detection/FD_AndroidStudio/fallDetection/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">Crisis</string>
+    <string name="braodcast">Broadcast SMS</string>
+    <string name="delete">Delete All</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="pick_contact">Add Contact</string>
+    <string name="start_service">Start Service</string>
+    <string name="stop_service">Stop Service</string>
+    <string name="title_activity_configure">Configure</string>
+    <!-- From: file:/Users/hitheshaum/fall-detection/FD_AndroidStudio/fallDetection/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+</resources>
